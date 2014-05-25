@@ -50,6 +50,9 @@ var B = 0x00;
 var C = 0x1E;
 var I = 'HANAKO';
 var T = 0x0000;
+var V = 0x64;
+var X = 0x00;
+var Y = 0x00;
 
 var SCHEMES = [
 	// TODO: fill in all colour schemes
@@ -249,15 +252,14 @@ function draw_status() {
 	[
 		SONG, // song name
 		SCHEMES[C].name, // colour scheme name
-		'V=$0x64', // always seems to be the same? version?
+		'V=' + hex(V, 2), // always seems to be the same? version?
 		'C=' + hex(C, 2), // colour scheme index
-		'Y=$0x00', // vertical shimmer offset
-		'X=$0x00', // horizontal shimmer offset
+		'Y=' + hex(Y, 2), // vertical blur intensity
+		'X=' + hex(X, 2), // horizontal blur intensity
 		'B=' + hex(B, 2), // beats since song start
 		'T=' + hex(T, 4), // frames since song start?
 		'I=' + I, // character
 		'M=FULL AUTO', // character cycling mode,
-		'',
 		FPS + ' Hz',
 	].forEach(function(s, i) {
 		CONTEXT.fillText(s, 4, HEIGHT - 10 * i - 10);
@@ -273,6 +275,7 @@ function draw_rhythm() {
 }
 
 function beat() {
+	B++;
 	// TODO: refactor the fuck out of this ugly function
 	if (!RHYTHM_LEFT) {
 		var input_rhythm = SONG_MAP[SONG].rhythm;
