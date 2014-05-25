@@ -24,6 +24,8 @@ function Song(name, rhythm) {
 	this.rhythm = rhythm;
 }
 
+var READY = false;
+
 var CANVAS = document.getElementById('canvas');
 var CONTEXT = CANVAS.getContext('2d');
 var WIDTH = global.innerWidth;
@@ -175,13 +177,16 @@ function hex(number, digits) {
 }
 
 function load() {
-	CONTEXT.font = '24pt Commodore';
-	CONTEXT.textAlign = 'left';
-	CONTEXT.fillText('loading', 20, 60);
+	resize();
 	function load_image(i) {
 		var img = CHARACTER_IMAGE[i] = document.createElement('img');
 		img.onload = function() {
-			CONTEXT.fillText(Array(i + 8).join(' ') + '.', 20, 60);
+			CONTEXT.font = '24pt Commodore';
+			CONTEXT.textAlign = 'left';
+			CONTEXT.fillText(
+				'loading' + Array(i + 2).join('.'),
+				20, 60
+			);
 			if (++i < CHARACTERS.length)
 				load_image(i);
 			else
@@ -193,6 +198,7 @@ function load() {
 }
 
 function start() {
+	READY = true;
 	resize();
 	CHARACTERS.forEach(function(c) {
 		CHARACTER_MAP[c.name] = c;
@@ -327,7 +333,8 @@ function resize() {
 	CHARACTER_CANVAS.height = HEIGHT;
 	CHARACTER_DATA = CHARACTER_CONTEXT.getImageData(0, 0, WIDTH, HEIGHT);
 	CHARACTER_CACHE = {};
-	CHARACTERS.forEach(cache_character);
+	if (READY)
+		CHARACTERS.forEach(cache_character);
 }
 
 function cache_character(character_object, i) {
