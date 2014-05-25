@@ -42,7 +42,7 @@ var RHYTHM_RIGHT;
 
 var CHARACTER_CANVAS = document.createElement('canvas');
 var CHARACTER_CONTEXT = CHARACTER_CANVAS.getContext('2d');
-var CHARACTER_IMAGE = document.createElement('img');
+var CHARACTER_IMAGE = [];
 var CHARACTER_DATA;
 var CHARACTER_CACHE;
 
@@ -175,12 +175,11 @@ function hex(number, digits) {
 }
 
 function load() {
-	resize();
 	CONTEXT.font = '24pt Commodore';
 	CONTEXT.textAlign = 'left';
 	CONTEXT.fillText('loading', 20, 60);
 	function load_image(i) {
-		var img = document.createElement('img');
+		var img = CHARACTER_IMAGE[i] = document.createElement('img');
 		img.onload = function() {
 			CONTEXT.fillText(Array(i + 8).join(' ') + '.', 20, 60);
 			if (++i < CHARACTERS.length)
@@ -194,6 +193,7 @@ function load() {
 }
 
 function start() {
+	resize();
 	CHARACTERS.forEach(function(c) {
 		CHARACTER_MAP[c.name] = c;
 	});
@@ -220,30 +220,28 @@ function draw_clear() {
 }
 
 function draw_character() {
-	if (CHARACTER_CACHE[I]) {
-		var x = CHARACTER_CACHE[I];
-		var y = CHARACTER_DATA;
-		var fr = SCHEMES[C].fr;
-		var fg = SCHEMES[C].fg;
-		var fb = SCHEMES[C].fb;
-		var br = SCHEMES[C].br;
-		var bg = SCHEMES[C].bg;
-		var bb = SCHEMES[C].bb;
-		for (var i = 0; i < WIDTH * HEIGHT; i++) {
-			if (x.data[4 * i + 3] > 127) {
-				y.data[4 * i + 0] = fr;
-				y.data[4 * i + 1] = fg;
-				y.data[4 * i + 2] = fb;
-				y.data[4 * i + 3] = 255;
-			} else {
-				y.data[4 * i + 0] = br;
-				y.data[4 * i + 1] = bg;
-				y.data[4 * i + 2] = bb;
-				y.data[4 * i + 3] = 255;
-			}
+	var x = CHARACTER_CACHE[I];
+	var y = CHARACTER_DATA;
+	var fr = SCHEMES[C].fr;
+	var fg = SCHEMES[C].fg;
+	var fb = SCHEMES[C].fb;
+	var br = SCHEMES[C].br;
+	var bg = SCHEMES[C].bg;
+	var bb = SCHEMES[C].bb;
+	for (var i = 0; i < WIDTH * HEIGHT; i++) {
+		if (x.data[4 * i + 3] > 127) {
+			y.data[4 * i + 0] = fr;
+			y.data[4 * i + 1] = fg;
+			y.data[4 * i + 2] = fb;
+			y.data[4 * i + 3] = 255;
+		} else {
+			y.data[4 * i + 0] = br;
+			y.data[4 * i + 1] = bg;
+			y.data[4 * i + 2] = bb;
+			y.data[4 * i + 3] = 255;
 		}
-		CONTEXT.putImageData(y, 0, 0);
 	}
+	CONTEXT.putImageData(y, 0, 0);
 }
 
 function draw_status() {
@@ -329,11 +327,12 @@ function resize() {
 	CHARACTER_CANVAS.height = HEIGHT;
 	CHARACTER_DATA = CHARACTER_CONTEXT.getImageData(0, 0, WIDTH, HEIGHT);
 	CHARACTER_CACHE = {};
+	CHARACTERS.forEach(cache_character);
 }
 
-function character_image_load() {
-	var input_width = CHARACTER_MAP[I].width;
-	var input_height = CHARACTER_MAP[I].height;
+function cache_character(character_object, i) {
+	var input_width = character_object.width;
+	var input_height = character_object.height;
 	var input_aspect = input_width / input_height;
 	var output_width = WIDTH;
 	var output_height = HEIGHT;
@@ -342,7 +341,7 @@ function character_image_load() {
 	if (input_aspect > output_aspect) {
 		var new_width = input_height * output_aspect;
 		CHARACTER_CONTEXT.drawImage(
-			CHARACTER_IMAGE,
+			CHARACTER_IMAGE[i],
 			(input_width - new_width) / 2,
 			0, new_width, input_height,
 			0, 0, output_width, output_height
@@ -350,18 +349,17 @@ function character_image_load() {
 	} else {
 		var new_height = input_width / output_aspect;
 		CHARACTER_CONTEXT.drawImage(
-			CHARACTER_IMAGE, 0,
+			CHARACTER_IMAGE[i], 0,
 			(input_height - new_height) / 2,
 			input_width, new_height,
 			0, 0, output_width, output_height
 		);
 	}
-	CHARACTER_CACHE[I] = CHARACTER_CONTEXT.
+	CHARACTER_CACHE[character_object.name] = CHARACTER_CONTEXT.
 		getImageData(0, 0, WIDTH, HEIGHT);
-};
+}
 
 global.onload = load;
 global.onresize = resize;
-CHARACTER_IMAGE.onload = character_image_load;
 
 })(this);
