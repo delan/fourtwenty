@@ -1,0 +1,27 @@
+@font-face {
+	font-family: Commodore;
+	src: url('commodore.woff');
+}
+
+html, body, canvas {
+	margin: 0;
+	padding: 0;
+	border: none;
+	outline: none;
+	display: block;
+}
+
+#font-loader {
+	position: absolute;
+	left: 0;
+	top: 0;
+	opacity: 0;
+	font-family: Commodore;
+	font-size: 64px;
+}
+
+#canvas {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
