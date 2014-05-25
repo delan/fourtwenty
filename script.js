@@ -171,6 +171,25 @@ function hex(number, digits) {
 	return prefix + padding + body;
 }
 
+function load() {
+	resize();
+	CONTEXT.font = '24pt Commodore';
+	CONTEXT.textAlign = 'left';
+	CONTEXT.fillText('loading', 20, 60);
+	function load_image(i) {
+		var img = document.createElement('img');
+		img.onload = function() {
+			CONTEXT.fillText(Array(i + 8).join(' ') + '.', 20, 60);
+			if (++i < CHARACTERS.length)
+				load_image(i);
+			else
+				start();
+		};
+		img.src = CHARACTERS[i].filename;
+	}
+	load_image(0);
+}
+
 function start() {
 	CHARACTERS.forEach(function(c) {
 		CHARACTER_MAP[c.name] = c;
@@ -178,8 +197,9 @@ function start() {
 	SONGS.forEach(function(s) {
 		SONG_MAP[s.name] = s;
 	});
-	resize();
 	requestAnimationFrame(frame);
+	TIMER_BEAT = setInterval(beat, DELAY_BEAT);
+	TIMER_FPS = setInterval(poll_fps, 1000);
 }
 
 function frame() {
@@ -337,10 +357,7 @@ function character_image_load() {
 		getImageData(0, 0, WIDTH, HEIGHT);
 };
 
-TIMER_BEAT = setInterval(beat, DELAY_BEAT);
-TIMER_FPS = setInterval(poll_fps, 1000);
-
-global.onload = start;
+global.onload = load;
 global.onresize = resize;
 CHARACTER_IMAGE.onload = character_image_load;
 
