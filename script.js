@@ -49,8 +49,8 @@ var CHARACTER_DATA;
 var CHARACTER_CACHE;
 
 var B = 0x00;
-var C = 0x1E;
-var I = 'HANAKO';
+var C;
+var I;
 var T = 0x0000;
 var V = 0x64;
 var X = 0x00;
@@ -200,12 +200,16 @@ function load() {
 function start() {
 	READY = true;
 	resize();
+	change_scheme();
+	change_character();
 	CHARACTERS.forEach(function(c) {
 		CHARACTER_MAP[c.name] = c;
 	});
 	SONGS.forEach(function(s) {
 		SONG_MAP[s.name] = s;
 	});
+	RHYTHM_LEFT = SONG_MAP[SONG].rhythm.split('').reverse().join('');
+	RHYTHM_RIGHT = SONG_MAP[SONG].rhythm;
 	requestAnimationFrame(frame);
 	TIMER_BEAT = setInterval(beat, DELAY_BEAT);
 	TIMER_FPS = setInterval(poll_fps, 1000);
@@ -280,24 +284,17 @@ function draw_rhythm() {
 
 function beat() {
 	B++;
-	// TODO: refactor the fuck out of this ugly function
-	if (!RHYTHM_LEFT) {
-		var input_rhythm = SONG_MAP[SONG].rhythm;
-		RHYTHM_LEFT = input_rhythm.split('').reverse().join('');
-		RHYTHM_RIGHT = input_rhythm;
-	} else {
-		RHYTHM_LEFT =
-			RHYTHM_LEFT[RHYTHM_LEFT.length - 1] +
-			RHYTHM_LEFT.substr(0, RHYTHM_LEFT.length - 1);
-		RHYTHM_RIGHT =
-			RHYTHM_RIGHT.substr(1, RHYTHM_RIGHT.length - 1) +
-			RHYTHM_RIGHT[0];
-	}
+	RHYTHM_LEFT =
+		RHYTHM_LEFT[RHYTHM_LEFT.length - 1] +
+		RHYTHM_LEFT.substr(0, RHYTHM_LEFT.length - 1);
+	RHYTHM_RIGHT =
+		RHYTHM_RIGHT.substr(1, RHYTHM_RIGHT.length - 1) +
+		RHYTHM_RIGHT[0];
 	var next = RHYTHM_RIGHT[0];
 	switch (next) {
 	case 'x':
 	case 'o':
-		change_colour();
+		change_scheme();
 		change_character();
 		break;
 	default:
@@ -305,7 +302,7 @@ function beat() {
 	}
 }
 
-function change_colour() {
+function change_scheme() {
 	var old = C;
 	do C = Math.floor(Math.random() * SCHEMES.length);
 	while (C == old || SCHEMES[C].fb == undefined);
@@ -315,8 +312,6 @@ function change_character() {
 	var old = I;
 	do I = CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)].name;
 	while (I == old);
-	if (!CHARACTER_CACHE[I])
-		CHARACTER_IMAGE.src = CHARACTER_MAP[I].filename;
 }
 
 function poll_fps() {
