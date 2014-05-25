@@ -104,7 +104,7 @@ var SCHEMES = [
         new Scheme('bay', 77, 254, 254, 0, 177, 57),
         new Scheme('marina', 195, 254, 254, 0, 177, 57),
         new Scheme('tornado', 254, 254, 254, 57, 177, 57),
-        /* TODO: what is saltine? */,
+        new Scheme('saltine'),
         new Scheme('blue', 77, 77, 254, 0, 0, 177),
         new Scheme('twilight', 195, 77, 254, 0, 0, 177),
         new Scheme('orchid', 254, 77, 254, 57, 0, 177),
