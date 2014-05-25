@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 	fx = atoi(argv[4]);
 	fy = atoi(argv[5]);
 	if (argc < 4) {
-		fputs("usage: getscheme f bx by fx fy hexid name\n", stderr);
+		fputs("usage: getscheme f bx by fx fy name\n", stderr);
 		return 1;
 	}
 	MagickWandGenesis();
@@ -45,9 +45,8 @@ int main(int argc, char **argv) {
 	fg = PixelGetGreen(p);
 	fb = PixelGetBlue(p);
 	printf(
-		"\tnew Scheme(%d, '%s', '#%02X%02X%02X', '#%02X%02X%02X'),\n",
-		strtol(argv[6], NULL, 16),
-		argv[7],
+		"\tnew Scheme('%s', %d, %d, %d, %d, %d, %d),\n",
+		argv[6],
 		(int)(br * 255),
 		(int)(bg * 255),
 		(int)(bb * 255),
