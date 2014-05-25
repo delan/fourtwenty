@@ -187,7 +187,9 @@ function load() {
 				20, 60
 			);
 			if (++i < CHARACTERS.length)
-				load_image(i);
+				requestAnimationFrame(
+					load_image.bind(this, i)
+				);
 			else
 				start();
 		};
@@ -360,7 +362,7 @@ function cache_character(character_object, i) {
 		getImageData(0, 0, WIDTH, HEIGHT);
 }
 
-global.onload = load;
+global.onload = requestAnimationFrame(load);
 global.onresize = resize;
 
 })(this);
