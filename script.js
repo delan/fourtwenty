@@ -180,6 +180,7 @@ function load() {
 	function load_image(i) {
 		var img = CHARACTER_IMAGE[i] = document.createElement('img');
 		img.onload = function() {
+			draw_clear();
 			CONTEXT.font = '24pt Commodore';
 			CONTEXT.textAlign = 'left';
 			CONTEXT.fillText(
