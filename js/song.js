@@ -71,12 +71,39 @@ global.Song.beat = function(timestamp) {
 		) + global.CURRENT_RHYTHM[0];
 	switch (global.CURRENT_RHYTHM[0]) {
 	case 'x':
+		Scheme.shuffle();
+		Character.shuffle();
+		global.CURRENT_RHYTHM_DROP_TIMESTAMP = timestamp;
+		global.CURRENT_RHYTHM_DROP_SYMBOL = CURRENT_RHYTHM[0];
+		global.CURRENT_RHYTHM_DROP_DIRECTION = Math.random() - 0.5;
+		// vertical blur
+		break;
 	case 'o':
 		Scheme.shuffle();
 		Character.shuffle();
 		global.CURRENT_RHYTHM_DROP_TIMESTAMP = timestamp;
 		global.CURRENT_RHYTHM_DROP_SYMBOL = CURRENT_RHYTHM[0];
 		global.CURRENT_RHYTHM_DROP_DIRECTION = Math.random() - 0.5;
+		// horizontal blur
+		break;
+	case '|':
+		Scheme.shuffle();
+		Character.shuffle();
+		// half beat blackout
+		break;
+	case '-':
+		Scheme.shuffle();
+		Character.shuffle();
+		break;
+	case '+':
+		Scheme.shuffle();
+		// horizontal blur
+		// blackout
+		break;
+	case ':':
+		Scheme.shuffle();
+		break;
+	case '.':
 		break;
 	default:
 		break;
