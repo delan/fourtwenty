@@ -8,7 +8,7 @@ global.Character = function(name, filename, width, height) {
 	this.height = height;
 	this.image_element = null;
 	this.image_data = null;
-}
+};
 
 global.Character.shuffle = function() {
 	var old = global.CURRENT_CHARACTER;

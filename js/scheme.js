@@ -9,7 +9,7 @@ global.Scheme = function(name, br, bg, bb, fr, fg, fb) {
 	this.fr = fr;
 	this.fg = fg;
 	this.fb = fb;
-}
+};
 
 global.Scheme.shuffle = function() {
 	var old = global.CURRENT_SCHEME;

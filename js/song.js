@@ -4,7 +4,7 @@ global.Song = function(name, rhythm) {
 	this.index = null;
 	this.name = name;
 	this.rhythm = rhythm;
-}
+};
 
 global.Song.shuffle = function() {
 	var old = global.CURRENT_SONG;
