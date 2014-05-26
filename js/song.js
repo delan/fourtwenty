@@ -17,8 +17,8 @@ global.Song.shuffle = function() {
 	global.STATUS.frame_count_last = 0;
 };
 
-global.Song.draw = function(context) {
-	context.font = '12pt Commodore';
+global.Song.draw = function(timestamp, context) {
+	context.font = '16px Commodore';
 	context.textAlign = 'left';
 	context.fillText(
 		global.CURRENT_RHYTHM,
@@ -29,10 +29,65 @@ global.Song.draw = function(context) {
 		global.CURRENT_RHYTHM.split('').reverse().join(''),
 		context.canvas.width / 2 - 2, 16
 	);
+	if (global.CURRENT_RHYTHM_DROP_TIMESTAMP) {
+		var translate_x = 24;
+		var animation_fraction = (
+			timestamp - CURRENT_RHYTHM_DROP_TIMESTAMP - 100
+		) / 150;
+		if (animation_fraction > 0) {
+			var alpha = 1 - animation_fraction;
+			var rotate = Math.PI / 16 * animation_fraction;
+			var translate_y = 32 * animation_fraction;
+		} else {
+			var alpha = 1;
+			var rotate = 0;
+			var translate_y = 0;
+		}
+		context.save();
+		context.fillStyle = 'rgba(0, 0, 0, ' + alpha + ')';
+		context.font = '48px Commodore';
+		if (CURRENT_RHYTHM_DROP_DIRECTION < 0) {
+			context.textAlign = 'left';
+			translate_x = -translate_x;
+		} else {
+			context.textAlign = 'right';
+			rotate = -rotate;
+		}
+		context.translate(
+			context.canvas.width / 2 + translate_x,
+			56 + translate_y
+		);
+		context.rotate(rotate);
+		context.fillText(global.CURRENT_RHYTHM_DROP_SYMBOL, 0, 0);
+		context.restore();
+	}
+};
+
+global.Song.beat = function(timestamp) {
+	global.STATUS.beat_count++;
+	global.CURRENT_RHYTHM =
+		global.CURRENT_RHYTHM.substr(
+			1, global.CURRENT_RHYTHM.length - 1
+		) + global.CURRENT_RHYTHM[0];
+	switch (global.CURRENT_RHYTHM[0]) {
+	case 'x':
+	case 'o':
+		Scheme.shuffle();
+		Character.shuffle();
+		global.CURRENT_RHYTHM_DROP_TIMESTAMP = timestamp;
+		global.CURRENT_RHYTHM_DROP_SYMBOL = CURRENT_RHYTHM[0];
+		global.CURRENT_RHYTHM_DROP_DIRECTION = Math.random() - 0.5;
+		break;
+	default:
+		break;
+	}
 };
 
 global.CURRENT_SONG = null;
 global.CURRENT_RHYTHM = null;
+global.CURRENT_RHYTHM_DROP_TIMESTAMP = null;
+global.CURRENT_RHYTHM_DROP_SYMBOL = null;
+global.CURRENT_RHYTHM_DROP_DIRECTION = null;
 
 global.SONGS = [
 	new global.Song(
