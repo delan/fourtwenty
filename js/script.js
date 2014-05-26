@@ -20,7 +20,7 @@ function load() {
 			document.createElement('img');
 		img.onload = function() {
 			CONTEXT.clearRect(0, 0, WIDTH, HEIGHT);
-			CONTEXT.font = '24pt Commodore';
+			CONTEXT.font = '32px Commodore';
 			CONTEXT.textAlign = 'left';
 			CONTEXT.fillText(
 				'loading' + Array(i + 2).join('.'),

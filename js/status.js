@@ -19,7 +19,7 @@ global.Status = function() {
 };
 
 global.Status.prototype.draw = function(context) {
-	context.font = '6pt Commodore';
+	context.font = '8px Commodore';
 	context.textAlign = 'left';
 	[
 		global.CURRENT_SONG.name,
