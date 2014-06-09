@@ -11,6 +11,7 @@ global.Character = function(name, filename, width, height) {
 };
 
 global.Character.resize = function(width, height) {
+	SCRATCH_DATA = SCRATCH_CONTEXT.createImageData(width, height);
 	CHARACTERS.forEach(function(character) {
 		character.cache(width, height);
 	});
@@ -55,7 +56,7 @@ global.Character.prototype.draw = function(timestamp, context, scheme) {
 	var w = context.canvas.width;
 	var h = context.canvas.height;
 	var p = this.image_data;
-	var q = context.getImageData(0, 0, w, h);
+	var q = SCRATCH_DATA;
 	var fr = scheme.fr;
 	var fg = scheme.fg;
 	var fb = scheme.fb;
@@ -120,6 +121,7 @@ global.Character.prototype.draw = function(timestamp, context, scheme) {
 
 var SCRATCH_CANVAS = document.createElement('canvas');
 var SCRATCH_CONTEXT = SCRATCH_CANVAS.getContext('2d');
+var SCRATCH_DATA = null;
 
 global.CURRENT_CHARACTER = null;
 global.CURRENT_CHARACTER_BLUR_TIMESTAMP = null;
