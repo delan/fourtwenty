@@ -17,12 +17,13 @@ function load() {
 			document.createElement('img');
 		img.onload = function() {
 			CONTEXT.clearRect(0, 0, WIDTH, HEIGHT);
+			CONTEXT.save();
 			CONTEXT.font = '32px Commodore';
-			CONTEXT.textAlign = 'left';
-			CONTEXT.fillText(
-				'loading' + Array(i + 2).join('.'),
-				20, 60
-			);
+			CONTEXT.textAlign = 'center';
+			CONTEXT.textBaseline = 'middle';
+			var num = (i + 2) * 0x420 / CHARACTERS.length;
+			CONTEXT.fillText(hex(num, 3), WIDTH / 2, HEIGHT / 2);
+			CONTEXT.restore();
 			if (++i < CHARACTERS.length)
 				requestAnimationFrame(
 					load_image.bind(this, i)

@@ -1,6 +1,6 @@
 (function(global) {
 
-function hex(number, digits) {
+global.hex = function(number, digits) {
 	var prefix = '$0x';
 	var body = parseInt(number.toString()).toString(16);
 	var length = digits + 1 - body.length;
