@@ -64,20 +64,37 @@ global.Character.prototype.draw = function(timestamp, context, scheme) {
 	var bb = scheme.bb;
 	var increment = CURRENT_CHARACTER_BLUR_DIRECTION ? w : 1;
 	var n = 0;
+	var r = 0;
+	var g = 0;
+	var b = 0;
+	var i = 0;
+	var j = 0;
+	var x = 0;
+	var y = 0;
+	var missed = 0;
+	var border_axis = 0;
+	var border_limit = CURRENT_CHARACTER_BLUR_DIRECTION ? h : w;
 	var animation_fraction = (
 		timestamp - CURRENT_CHARACTER_BLUR_TIMESTAMP
 	) / 200;
 	if (0 < animation_fraction && animation_fraction < 1)
 		n = ((w / 20) * (1 - animation_fraction)) | 0;
-	for (var y = 0; y < h; y++) {
-		for (var x = 0; x < w; x++) {
-			var i = 4 * (w * y + x);
-			var r = 0;
-			var g = 0;
-			var b = 0;
-			var missed = 0;
-			for (var j = -n; j <= n; j++) {
-				if (y + j < 0 || y + j >= h) {
+	for (y = 0; y < h; y++) {
+		for (x = 0; x < w; x++) {
+			i = 4 * (w * y + x);
+			r = 0;
+			g = 0;
+			b = 0;
+			missed = 0;
+			for (j = -n; j <= n; j++) {
+				if (CURRENT_CHARACTER_BLUR_DIRECTION)
+					border_axis = y;
+				else
+					border_axis = x;
+				if (
+					border_axis + j < 0 ||
+					border_axis + j >= border_limit
+				) {
 					missed++;
 				} else if (
 					p.data[i + 3 + 4 * increment * j] >
