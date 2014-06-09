@@ -10,11 +10,82 @@ global.Character = function(name, filename, width, height) {
 	this.image_data = null;
 };
 
+global.Character.resize = function(width, height) {
+	SCRATCH_BLUR_DATA = SCRATCH_CONTEXT.createImageData(width, height);
+	CHARACTERS.forEach(function(character) {
+		character.cache(width, height);
+	});
+};
+
 global.Character.shuffle = function() {
 	var old = global.CURRENT_CHARACTER;
 	do global.CURRENT_CHARACTER = global.CHARACTERS[
 		Math.floor(Math.random() * global.CHARACTERS.length)
 	]; while (global.CURRENT_CHARACTER == old);
+};
+
+global.Character.blur_x = function(input_data, output_data, intensity) {
+	var w = input_data.width;
+	var h = input_data.height;
+	var p = input_data.data;
+	var q = output_data.data;
+	var n = intensity;
+	for (var y = 0; y < h; y++) {
+		for (var x = 0; x < w; x++) {
+			var i = 4 * (input_data.width * y + x);
+			var r = 0;
+			var g = 0;
+			var b = 0;
+			var a = 0;
+			var missed = 0;
+			for (var j = -n; j <= n; j++) {
+				if (x + j < 0 || x + j >= w) {
+					missed++;
+				} else {
+					r += p[i + 0 + 4 * j];
+					g += p[i + 1 + 4 * j];
+					b += p[i + 2 + 4 * j];
+					a += p[i + 3 + 4 * j];
+				}
+			}
+			q[i + 0] = r / (2 * n + 1 - missed);
+			q[i + 1] = g / (2 * n + 1 - missed);
+			q[i + 2] = b / (2 * n + 1 - missed);
+			q[i + 3] = a / (2 * n + 1 - missed);
+		}
+	}
+};
+
+global.Character.blur_y = function(input_data, output_data, intensity) {
+	var w = input_data.width;
+	var h = input_data.height;
+	var p = input_data.data;
+	var q = output_data.data;
+	var n = intensity;
+	for (var y = 0; y < h; y++) {
+		for (var x = 0; x < w; x++) {
+			var i = 4 * (input_data.width * y + x);
+			var r = 0;
+			var g = 0;
+			var b = 0;
+			var a = 0;
+			var missed = 0;
+			for (var j = -n; j <= n; j++) {
+				if (y + j < 0 || y + j >= h) {
+					missed++;
+				} else {
+					r += p[i + 0 + 4 * w * j];
+					g += p[i + 1 + 4 * w * j];
+					b += p[i + 2 + 4 * w * j];
+					a += p[i + 3 + 4 * w * j];
+				}
+			}
+			q[i + 0] = r / (2 * n + 1 - missed);
+			q[i + 1] = g / (2 * n + 1 - missed);
+			q[i + 2] = b / (2 * n + 1 - missed);
+			q[i + 3] = a / (2 * n + 1 - missed);
+		}
+	}
 };
 
 global.Character.prototype.cache = function(output_width, output_height) {
@@ -45,11 +116,12 @@ global.Character.prototype.cache = function(output_width, output_height) {
 	);
 };
 
-global.Character.prototype.draw = function(context, scheme) {
+global.Character.prototype.draw = function(timestamp, context, scheme) {
 	var w = context.canvas.width;
 	var h = context.canvas.height;
 	var x = this.image_data;
 	var y = context.getImageData(0, 0, w, h);
+	var z = SCRATCH_BLUR_DATA;
 	var fr = scheme.fr;
 	var fg = scheme.fg;
 	var fb = scheme.fb;
@@ -69,13 +141,30 @@ global.Character.prototype.draw = function(context, scheme) {
 			y.data[4 * i + 3] = 255;
 		}
 	}
+	if (CURRENT_CHARACTER_BLUR_TIMESTAMP) {
+		var animation_fraction = (
+			timestamp - CURRENT_CHARACTER_BLUR_TIMESTAMP
+		) / 250;
+		if (0 < animation_fraction && animation_fraction < 1) {
+			var intensity = (32 - animation_fraction * 32) | 0;
+			if (global.CURRENT_CHARACTER_BLUR_DIRECTION)
+				Character.blur_y(y, z, intensity);
+			else
+				Character.blur_x(y, z, intensity);
+			y = z;
+		}
+	}
 	context.putImageData(y, 0, 0);
 };
 
 var SCRATCH_CANVAS = document.createElement('canvas');
 var SCRATCH_CONTEXT = SCRATCH_CANVAS.getContext('2d');
+var SCRATCH_BLUR_DATA;
 
 global.CURRENT_CHARACTER = null;
+global.CURRENT_CHARACTER_BLUR_TIMESTAMP = null;
+// [false, true] = [horizontal blur, vertical blur]
+global.CURRENT_CHARACTER_BLUR_DIRECTION = true;
 
 global.CHARACTERS = [
 	new global.Character('HANAKO', 'bitmap88.png', 1280, 720),

@@ -51,7 +51,7 @@ function frame(timestamp) {
 	STATUS.frame_count++;
 	STATUS.timestamp = timestamp;
 	CONTEXT.clearRect(0, 0, WIDTH, HEIGHT);
-	CURRENT_CHARACTER.draw(CONTEXT, CURRENT_SCHEME);
+	CURRENT_CHARACTER.draw(timestamp, CONTEXT, CURRENT_SCHEME);
 	STATUS.draw(CONTEXT);
 	Song.draw(timestamp, CONTEXT);
 	requestAnimationFrame(frame);
@@ -62,11 +62,8 @@ function resize() {
 	HEIGHT = global.innerHeight;
 	CANVAS.width = WIDTH;
 	CANVAS.height = HEIGHT;
-	if (READY) {
-		CHARACTERS.forEach(function(character) {
-			character.cache(WIDTH, HEIGHT);
-		});
-	}
+	if (READY)
+		Character.resize(WIDTH, HEIGHT);
 }
 
 global.onload = requestAnimationFrame(load);

@@ -77,6 +77,8 @@ global.Song.beat = function(timestamp) {
 		global.CURRENT_RHYTHM_DROP_SYMBOL = CURRENT_RHYTHM[0];
 		global.CURRENT_RHYTHM_DROP_DIRECTION = Math.random() - 0.5;
 		// vertical blur
+		global.CURRENT_CHARACTER_BLUR_TIMESTAMP = timestamp;
+		global.CURRENT_CHARACTER_BLUR_DIRECTION = true;
 		break;
 	case 'o':
 		Scheme.shuffle();
@@ -85,6 +87,8 @@ global.Song.beat = function(timestamp) {
 		global.CURRENT_RHYTHM_DROP_SYMBOL = CURRENT_RHYTHM[0];
 		global.CURRENT_RHYTHM_DROP_DIRECTION = Math.random() - 0.5;
 		// horizontal blur
+		global.CURRENT_CHARACTER_BLUR_TIMESTAMP = timestamp;
+		global.CURRENT_CHARACTER_BLUR_DIRECTION = false;
 		break;
 	case '|':
 		Scheme.shuffle();
@@ -98,6 +102,8 @@ global.Song.beat = function(timestamp) {
 	case '+':
 		Scheme.shuffle();
 		// horizontal blur
+		global.CURRENT_CHARACTER_BLUR_TIMESTAMP = timestamp;
+		global.CURRENT_CHARACTER_BLUR_DIRECTION = false;
 		// blackout
 		break;
 	case ':':
