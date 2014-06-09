@@ -144,13 +144,14 @@ global.Character.prototype.draw = function(timestamp, context, scheme) {
 	if (CURRENT_CHARACTER_BLUR_TIMESTAMP) {
 		var animation_fraction = (
 			timestamp - CURRENT_CHARACTER_BLUR_TIMESTAMP
-		) / 250;
+		) / 160;
 		if (0 < animation_fraction && animation_fraction < 1) {
-			var intensity = (32 - animation_fraction * 32) | 0;
+			var p = w / 10;
+			var n = (p - animation_fraction * p) | 0;
 			if (global.CURRENT_CHARACTER_BLUR_DIRECTION)
-				Character.blur_y(y, z, intensity);
+				Character.blur_y(y, z, n);
 			else
-				Character.blur_x(y, z, intensity);
+				Character.blur_x(y, z, n);
 			y = z;
 		}
 	}
